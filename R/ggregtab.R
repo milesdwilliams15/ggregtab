@@ -10,6 +10,7 @@
 #' @param ratio Controls the height to width ratio of the table. Set to `1/5` by default.
 #' @param base_family Controls the font family of the plot. Set to `"sans"` by default.
 #' @returns A `{ggplot2}` object.
+#' @export
 #' @examples 
 #' # Fit some regression models
 #' fit1 <- lm(mpg ~ hp + wt, mtcars)
