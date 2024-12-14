@@ -1,0 +1,21 @@
+Package: ggregtab
+Title: "Make Regression Tables with `{ggplot2}`"
+Version: 0.0.0.9000
+Authors@R: 
+    person("Miles", "Williams", , "williamsmd@denison.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0192-5542"))
+Description: This package uses `{ggplot2}` under the hood to create regression tables that are produced as images.
+License: `use_mit_license()`
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+Depends:
+    ggplot2,
+    magrittr
+Imports:
+    lmtest,
+    broom,
+    dplyr,
+    scales,
+    stringr,
+    gtools
