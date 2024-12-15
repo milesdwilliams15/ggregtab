@@ -1,5 +1,5 @@
 ---
-title: "Introducing `{ggregtab}`"
+title: "Introducing `{ggregtab}` <img src='inst/logo.png' align='right' height='130' />"
 output: github_document
 ---
 
@@ -7,13 +7,13 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.height = 4, fig.width = 4, dpi = 500)
 ```
 
-It's yet another R package for making regression tables. Why?!
+Yet another R package for making regression tables... Why?!
 
-The `{ggregtab}` package is a hyper-specific solution to a hyper-specific problem I've been having. As an academic researcher, I love the look of pdfs that I can make of paper manuscripts using Quarto and RMarkdown. Unfortunately, most of the journals that I submit my work to want Word Documents. This is havoc for regression tables. The placement of these is never formatted the way I like, and often I have to contend with tables being split between two pages because of their placement in my Quarto or RMarkdown file. This is frustrating to no end, and I couldn't find a solution other than editing my files after the fact.
+The `{ggregtab}` package is a hyper-specific solution to a hyper-specific problem I have. As an academic researcher, I love the look of the pdf manuscripts I can make using Quarto and RMarkdown. Unfortunately, most of the journals that I submit my work to want Word Documents. This wreaks havoc with regression tables. They're never formatted the way I like, and often I have to contend with tables being split between two pages because of their placement in my Quarto or RMarkdown file. This is a never ending source of frustration. To add insult to injury, I couldn't find a solution other than editing my .docx files after the fact. That's not ideal for replication.
 
-I then had a realization. I don't have this problem with my figures because they are rendered as images. That means they aren't split between pages. So what if I had a method for quickly making a figure that just happens to look like a table?
+I then had a realization. I don't have this problem with the plots I make for my manuscripts, and the reason is that they're rendered as images. No matter their placement in my Quarto or RMarkdown files, plots are never split between pages. So what if I had a method for quickly making a plot that just happens to look like a table?
 
-Hence, I give you `{ggregtab}`. It produces ggplots that look like regression tables.
+Hence, I give you `{ggregtab}`. It produces plots that look like regression tables. Specifically, it produces ggplots that look like regression tables, making them both easy to produce and easy to customize using the vast ecosystem of tools and packages centered around `{ggplot2}`.
 
 To install the package just write:
 
@@ -31,13 +31,13 @@ The main functions in the package are:
 
 `ggregtab()` produces a ggplot that looks like a regression table once given a tidy coefficient test object.
 
-Importantly, this object must contain eight unique columns. In addition to the usual that are produced for model objects using `broom::tidy()`, additional columns required are `conf.low`, `conf.high`, `model`, and `N`. The first two are required if you want to show confidence intervals instead of standard errors in your "tables." The latter are required for model labeling and for showing sample sizes.
+Importantly, this object must contain eight unique columns. In addition to the usual that are produced for model objects using `broom::tidy()`, other columns required are `conf.low`, `conf.high`, `model`, and `N`. The first two are needed if you want to show confidence intervals instead of standard errors in your tables. The latter are needed for model labeling and for showing sample sizes.
 
-`tidy_coeftest()` is a helper function that makes it easy to get your model objects into the correct shape. You don't have to use this function, however, as long as the coefficient test object you give to `ggregtab()` contains the requisite columns.
+`tidy_coeftest()` is a helper function that makes it easy to get your model objects into the correct shape. You don't have to use this function, however, as long as the coefficient test object you give to `ggregtab()` contains the required columns.
 
 ## An Example
 
-Here's some code that produces a regression table using data from the `mtcars` dataset.
+Here's some code that produces a regression table using data from the `mtcars` dataset. If I didn't know any better, I wouldn't know that this was a plot rather than a decently formatted regression table.
 
 ```{r fig.height=4, fig.width=4}
 ## open the package
@@ -53,7 +53,7 @@ tidy_fit <- tidy_coeftest(fit)
 ggregtab(tidy_fit)
 ```
 
-Looking inside the `tidy_fit` object produced using `tidy_coeftest()`, it's clear what shape the model summary needs to be in for plotting:
+For those curious few who care, here's what the `tidy_fit` object looks like that `ggregtab()` expects to see:
 
 ```{r}
 tidy_fit
@@ -62,7 +62,7 @@ tidy_fit
 
 ## Advanced Options
 
-There are many ways to customize the appearance of your regression tables and the model summary statistics. I've included some examples below.
+There are many ways to customize your regression tables. I've included some examples below.
 
 ### Updating Labels and Text
 
@@ -84,7 +84,11 @@ ggregtab(tidy_fit) +
   )
 ```
 
-You can include whatever summary stats you like for you models by updating the x-axis labels. Note that to do this you need to use `scale_x_continuous()`. Under the hood a continuous scale is used for any and all model IDs. This was a round-about solution for making the plot show a upper and lower axis label simultaneously---one for the model stats and the other for the model title.
+You can also update the model summary stats shown below the coefficient summaries. By default just the sample size is shown. I excluded other summary stats like R-squared or negative log-likelihood because in most cases I'm not concerned about these metrics of model performance (R-squared is overrated anyway for drawing conclusions about model fit within sample, and I find log-likelihood generally uninformative). 
+
+But you might feel otherwise. So here's how you can update the model summary stats to show whatever you want.
+
+First, create a customized label by calculating the stats you care about. Second, give this new label to `scale_x_continuous()`. Under the hood a continuous x scale is used for any and all model IDs. This was a round-about solution for making the plot show an upper and lower axis label simultaneously---one for the model stats and the other for the model caption.
 
 ```{r}
 ## get adjusted r-squared and N
@@ -118,7 +122,7 @@ ggregtab(tidy_fit) +
   )
 ```
 
-One last thing I'll show is that you can update the fonts of your tables. Here's an example using "serif". I haven't tested it, but I assume you could use something like `{showtext}` to use a wider variety of fonts than what are available by default with `{ggplot2}` as well.
+One last thing I'll show you is how to update the font of your tables. Here's an example using "serif". I haven't tested it, but I assume you could use something like `{showtext}` to use a wider variety of fonts than what are available by default with `{ggplot2}` as well.
 
 ```{r}
 ggregtab(tidy_fit, base_family = "serif") +
@@ -140,9 +144,13 @@ ggregtab(tidy_fit, base_family = "serif") +
   )
 ```
 
-## Multiple Models
+### Multiple Models
 
 You can show multiple regression models at once. When doing this, just make sure that the tidy coefficient test object you give `ggregtab()` has unique model IDs for each model you want to show. You can control this using the `model` option in `tidy_coeftest()`.
+
+Also, when you start adding more models, you may want to play around with the `ratio` option in `ggregtab()`. By default this is set to `1/5`, but you'll probably need to adjust this as you add more columns to your table. This `ratio` option is given to `coord_fixed()` under the hood, which is a convenient method for keeping consistent dimensions for data visualizations.
+
+Here's an example with three regression models:
 
 ```{r}
 fit1 <- lm(mpg ~ hp, mtcars)
@@ -163,7 +171,7 @@ dplyr::bind_rows(
 
 ### Using Robust or Clustered Standard Errors
 
-Under the hood, `tidy_coeftest()` is using `lmtest::coeftest()`. This function lets you supply your own variance-covariance matrix for coefficient tests. `tidy_coeftest()` lets you pass such a matrix to `coeftest()` using the same syntax. Just specify `vcov. = ...` and provide your alternative variance-covariance matrix. This is useful if you want to show robust or clustered standard errors.
+Under the hood, `tidy_coeftest()` uses `lmtest::coeftest()` before it passes things over to `broom::tidy()`. This means you can supply your own variance-covariance matrix for coefficient tests. `tidy_coeftest()` lets you pass such a matrix to `coeftest()` using the same `vcov.` syntax. Just specify `vcov. = ...` and provide your alternative variance-covariance matrix. This is useful if you want to show robust or clustered standard errors.
 
 You might do this using functions from the `{sandwich}` package, like so:
 
@@ -191,4 +199,6 @@ tidy_coeftest(
 
 I've just barely scratched the surface of what you can do. Since `ggplot()` itself is so infinitely customizable, so are the tables you can make with `ggregtab()`.
 
-Have fun disguising ggplots as regression tables!
+You can also use any model object or class that is compatible with `lmtest::coeftest()`. I haven't checked, but that covers most model types that most researchers use most of the time.
+
+Now go have fun disguising ggplots as regression tables!
